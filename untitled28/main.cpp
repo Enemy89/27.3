@@ -2,16 +2,22 @@
 #include <vector>
 #include <string>
 
-class Employee {
+class Person {
     std::string name;
-    bool hasTask;
 
 public:
-    Employee(const std::string& employeeName) : name(employeeName), hasTask(false) {}
+    Person(const std::string& personName) : name(personName) {}
 
     std::string getName() const {
         return name;
     }
+};
+
+class Employee : public Person {
+    bool hasTask;
+
+public:
+    Employee(const std::string& employeeName) : Person(employeeName), hasTask(false) {}
 
     bool hasReceivedTask() const {
         return hasTask;
@@ -26,11 +32,11 @@ public:
     }
 };
 
-class Manager : public Employee {
+class Manager : public Person {
     std::vector<Employee*> team;
 
 public:
-    Manager(const std::string& managerName, const std::vector<Employee*>& employees) : Employee(managerName), team(employees) {}
+    Manager(const std::string& managerName, const std::vector<Employee*>& employees) : Person(managerName), team(employees) {}
 
     int getTeamSize() const {
         return team.size();
@@ -69,6 +75,11 @@ public:
     }
 };
 
+class Director : public Manager {
+public:
+    Director(const std::string& directorName, const std::vector<Employee*>& employees) : Manager(directorName, employees) {}
+};
+
 int main() {
     int numTeams, numEmployees;
     std::cout << "Enter number of teams: ";
@@ -91,11 +102,14 @@ int main() {
         managers.push_back(manager);
     }
 
+    std::string directorName = "Director";
+    Director* director = new Director(directorName, std::vector<Employee*>());
+
     int instruction;
     bool allEmployeesAssigned = false;
     while (!allEmployeesAssigned) {
         allEmployeesAssigned = true;
-        std::cout << "Enter an instruction for the company (-1 to exit): ";
+        std::cout << "Enter an instruction for " << director->getName() << " (-1 to exit): ";
         std::cin >> instruction;
 
         if (instruction == -1) {
@@ -122,4 +136,5 @@ int main() {
     for (int i = 0; i < managers.size(); ++i) {
         delete managers[i];
     }
+    delete director;
 }
